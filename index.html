@@ -130,9 +130,20 @@
           <button className="carousel-arrow prev" onClick={prevSlide} aria-label="Previous Slide">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
           </button>
+          
           <div className="carousel-slide">
             <img src={images[currentIndex]} alt={`ภาพน้องแมววัดคงคา รูปที่ ${currentIndex + 1}`} className="carousel-img" />
+            
+            {/* Elegant Caption Overlay */}
+            <div className="carousel-caption">
+              <div className="carousel-caption-text">
+                <PawIcon style={{ fill: 'none', color: '#fff', verticalAlign: 'middle', marginRight: '6px' }} />
+                <span>ภาพความน่ารักของน้องแมววัดคงคา</span>
+              </div>
+              <span className="carousel-counter">{currentIndex + 1} / {images.length}</span>
+            </div>
           </div>
+          
           <button className="carousel-arrow next" onClick={nextSlide} aria-label="Next Slide">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
           </button>
@@ -146,6 +157,9 @@
               ></span>
             ))}
           </div>
+
+          {/* Glowing Autoplay Progress Bar (resets animation on index change) */}
+          <div key={currentIndex} className={`carousel-progress-bar ${!isHovered ? 'animate' : ''}`}></div>
         </div>
       );
     };
