@@ -20,6 +20,8 @@
   <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- jsQR Library for Client-side QR decoding -->
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 </head>
 <body>
   <div id="root"></div>
@@ -186,6 +188,12 @@
       // Donation flow step: 'input' -> 'qr' -> 'success'
       const [donationStep, setDonationStep] = useState('input');
 
+      // Slip verification states
+      const [slipFile, setSlipFile] = useState(null);
+      const [slipError, setSlipError] = useState('');
+      const [isVerifyingSlip, setIsVerifyingSlip] = useState(false);
+      const [verifiedAmount, setVerifiedAmount] = useState(null);
+
       // Cats Gallery List (images downloaded from Google Drive)
       const catsList = ['cat1.jpg', 'cat2.jpg', 'cat3.jpg', 'cat4.jpg', 'cat5.jpg', 'cat6.jpg'];
 
@@ -258,11 +266,118 @@
         }
       };
 
-      // Confirm Payment Simulation
+      // Handle Slip File Selection
+      const handleSlipChange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        setSlipFile(file);
+        setSlipError('');
+        setVerifiedAmount(null);
+      };
+
+      // Verify Slip using jsQR and Backend SlipOK API
+      const handleVerifySlip = () => {
+        if (!slipFile) {
+          setSlipError('กรุณาเลือกไฟล์รูปภาพสลิปโอนเงิน');
+          return;
+        }
+
+        setIsVerifyingSlip(true);
+        setSlipError('');
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Limit max dimension to speed up QR scanning
+            let width = img.width;
+            let height = img.height;
+            const maxDimension = 1000;
+            if (width > maxDimension || height > maxDimension) {
+              if (width > height) {
+                height = Math.round((height * maxDimension) / width);
+                width = maxDimension;
+              } else {
+                width = Math.round((width * maxDimension) / height);
+                height = maxDimension;
+              }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            try {
+              const imageData = ctx.getImageData(0, 0, width, height);
+              const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+              if (code && code.data) {
+                const qrString = code.data;
+                const finalAmount = customAmount ? parseFloat(customAmount) : selectedAmount;
+
+                // Send decoded QR string to backend Workers API
+                fetch('/api/donation', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ 
+                    amount: finalAmount, // Fallback amount if API keys are not set
+                    qrData: qrString 
+                  })
+                })
+                .then(async (res) => {
+                  const data = await res.json();
+                  if (!res.ok) {
+                    throw new Error(data.error || "การตรวจสอบสลิปไม่สำเร็จ");
+                  }
+                  return data;
+                })
+                .then(data => {
+                  setIsVerifyingSlip(false);
+                  if (data.success) {
+                    setCurrentAmount(data.currentAmount);
+                    setTotalDonors(data.totalDonors);
+                    setVerifiedAmount(data.actualAmount);
+                    setDonationStep('success');
+                    
+                    // Trigger a happy meow reaction from the virtual cat!
+                    setCatReaction(`เหมียววว! ยอดเงินเข้าบัญชีเรียบร้อยแล้ว จำนวน ฿${data.actualAmount.toLocaleString()} ขอบพระคุณทาสผู้ใจดีเป็นอย่างยิ่งนะเมี๊ยว! 😻🧡🎉`);
+                    setCatEmoji('😻');
+                  }
+                })
+                .catch(err => {
+                  setIsVerifyingSlip(false);
+                  setSlipError(err.message || 'ไม่สามารถยืนยันสลิปได้');
+                });
+
+              } else {
+                setIsVerifyingSlip(false);
+                setSlipError('ไม่พบ QR Code ในรูปภาพสลิป กรุณาใช้ไฟล์รูปสลิปที่บันทึกจากแอปธนาคารโดยตรง และตรวจสอบว่ารูปภาพมีความชัดเจน');
+              }
+            } catch (err) {
+              setIsVerifyingSlip(false);
+              setSlipError('เกิดข้อผิดพลาดในการดึงข้อมูลรูปภาพ กรุณาลองใหม่อีกครั้ง');
+            }
+          };
+          img.onerror = () => {
+            setIsVerifyingSlip(false);
+            setSlipError('ไม่สามารถโหลดรูปภาพได้ กรุณาอัปโหลดไฟล์รูปภาพ (JPG, PNG)');
+          };
+          img.src = event.target.result;
+        };
+        reader.onerror = () => {
+          setIsVerifyingSlip(false);
+          setSlipError('ไม่สามารถอ่านไฟล์ได้');
+        };
+        reader.readAsDataURL(slipFile);
+      };
+
+      // Confirm Payment Simulation (Bypass/Manual)
       const handleConfirmPayment = () => {
         const finalAmount = customAmount ? parseFloat(customAmount) : selectedAmount;
 
-        // Post update to Cloudflare Workers KV API
         fetch('/api/donation', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -277,17 +392,17 @@
             setCurrentAmount(data.currentAmount);
             setTotalDonors(data.totalDonors);
           } else {
-            // Fallback
             setCurrentAmount(prev => prev + finalAmount);
             setTotalDonors(prev => prev + 1);
           }
+          setVerifiedAmount(finalAmount);
           setDonationStep('success');
         })
         .catch(err => {
           console.log("Offline mode post fallback:", err);
-          // Fallback local update if API is not running (e.g. running locally via file://)
           setCurrentAmount(prev => prev + finalAmount);
           setTotalDonors(prev => prev + 1);
+          setVerifiedAmount(finalAmount);
           setDonationStep('success');
         });
 
@@ -301,6 +416,9 @@
         setFormMessage('');
         setSelectedAmount(250);
         setCustomAmount('');
+        setSlipFile(null);
+        setSlipError('');
+        setVerifiedAmount(null);
         setDonationStep('input');
       };
 
@@ -545,20 +663,77 @@
 
                       <PromptPayQR amount={customAmount ? customAmount : selectedAmount} />
 
+                      {/* Slip File Upload Form */}
+                      <div className="form-group" style={{ margin: '1.5rem 0' }}>
+                        <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          🧾 อัปโหลดรูปสลิปเพื่อยืนยันยอดเงินจริง
+                        </label>
+                        <div className={`file-upload-zone ${slipFile ? 'has-file' : ''}`}>
+                          <input 
+                            type="file" 
+                            accept="image/*"
+                            onChange={handleSlipChange} 
+                            id="slip-upload-input"
+                            style={{ display: 'none' }}
+                          />
+                          <label htmlFor="slip-upload-input" className="file-upload-label" style={{ cursor: 'pointer', display: 'block', padding: '1.25rem', textAlign: 'center' }}>
+                            {slipFile ? (
+                              <div>
+                                <span style={{ color: 'var(--color-success)', fontWeight: '600' }}>✓ เลือกไฟล์สลิปแล้ว</span>
+                                <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.25rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                  {slipFile.name}
+                                </div>
+                              </div>
+                            ) : (
+                              <div>
+                                <span style={{ fontSize: '1.5rem', display: 'block', marginBottom: '0.25rem' }}>📸</span>
+                                <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>คลิกเพื่อเลือกภาพสลิปธนาคาร</span>
+                              </div>
+                            )}
+                          </label>
+                        </div>
+                        {slipError && (
+                          <div className="slip-error-msg" style={{ color: 'var(--color-error)', fontSize: '0.85rem', marginTop: '0.5rem', fontWeight: '500', background: 'rgba(239, 68, 68, 0.08)', padding: '0.5rem 0.75rem', borderRadius: '8px', border: '1px solid rgba(239, 68, 68, 0.15)' }}>
+                            ⚠️ {slipError}
+                          </div>
+                        )}
+                      </div>
+
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                         <button
                           type="button"
                           className="btn btn-primary"
-                          onClick={handleConfirmPayment}
-                          style={{ width: '100%', padding: '0.85rem' }}
+                          onClick={handleVerifySlip}
+                          disabled={isVerifyingSlip || !slipFile}
+                          style={{ width: '100%', padding: '0.85rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}
                         >
-                          ยืนยันว่าโอนเงินเสร็จสิ้นแล้ว
+                          {isVerifyingSlip ? (
+                            <>
+                              <span className="spinner"></span> กำลังตรวจสอบสลิป...
+                            </>
+                          ) : (
+                            <>
+                              ยืนยันยอดเงินบริจาค <PawIcon />
+                            </>
+                          )}
                         </button>
+                        
+                        {/* Simulation bypass link (if SlipOK isn't set up or they just want to simulate) */}
+                        <button
+                          type="button"
+                          onClick={handleConfirmPayment}
+                          className="btn-link"
+                          style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', textDecoration: 'underline', border: 'none', background: 'none', cursor: 'pointer', padding: '0.25rem 0' }}
+                        >
+                          กดที่นี่เพื่อทดสอบแบบระบบจำลอง (ไม่ต้องใช้สลิปจริง)
+                        </button>
+
                         <button
                           type="button"
                           className="btn btn-secondary"
                           onClick={() => setDonationStep('input')}
                           style={{ width: '100%', padding: '0.85rem' }}
+                          disabled={isVerifyingSlip}
                         >
                           ย้อนกลับไปแก้ไข
                         </button>
