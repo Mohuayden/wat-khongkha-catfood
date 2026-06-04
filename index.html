@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ป้อนข้าวน้องแมวจร วัดคงคา | โครงการระดมทุนช่วยค่าอาหารแมว</title>
   
+  <!-- Cute Cat Tab Icon (Favicon) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐱</text></svg>">
+  
   <!-- Google Fonts: Outfit & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -150,6 +153,16 @@
       // Donation flow step: 'input' -> 'qr' -> 'success'
       const [donationStep, setDonationStep] = useState('input');
 
+      // Cats Gallery List (images downloaded from Google Drive)
+      const catsList = [
+        { id: 1, name: 'น้องส้มแฝดพี่', img: 'cat1.jpg', status: '🐱 อ้วนกลมรักสงบ', bio: 'เจ้าของตำแหน่งหนุ่มเรียบร้อยประจำศาลา คอยเฝ้าหลวงพี่ตอนกวาดใบไม้' },
+        { id: 2, name: 'เจ้าสามสี', img: 'cat2.jpg', status: '🌸 สาวน้อยขี้อ้อน', bio: 'ชอบปีนตักสาธุชนที่มาทำบุญ ใครได้เจอเป็นต้องยอมควักขนมให้' },
+        { id: 3, name: 'ลุงทักซิโด้', img: 'cat3.jpg', status: '🎩 เจ้าถิ่นประจำวัด', bio: 'มาเฟียประจำศาลาหลัก รักการนอนเป็นชีวิตจิตใจ แต่ตื่นเร็วเวลาได้ยินเสียงจาน' },
+        { id: 4, name: 'คุณนวลน้อย', img: 'cat4.jpg', status: '🤍 คุณนายสะอาด', bio: 'สาวขนขาวตาปนเทา รักความสะอาดและแต่งตัวเก่ง ขวัญใจน้องๆ ทุกตัว' },
+        { id: 5, name: 'เจ้าเปี๊ยก', img: 'cat5.jpg', status: '⚡ แซบซนป่วนวัด', bio: 'เด็กซนวัยกำลังวิ่ง คอยไล่จับเงาและขโมยขนมเพื่อนๆ เป็นประจำ' },
+        { id: 6, name: 'พี่เสือโคร่ง', img: 'cat6.jpg', status: '🐯 นักล่าเฝ้าโบสถ์', bio: 'ลายสลิดสุดเท่ คอยเดินตรวจตราความเรียบร้อยรอบโบสถ์ตอนเช้ามืด' }
+      ];
+
       useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
       }, [theme]);
@@ -247,6 +260,7 @@
               <nav className="nav-links">
                 <a href="#home" className="nav-link">หน้าแรก</a>
                 <a href="#tiers" className="nav-link">แพ็คเกจอิ่มท้อง</a>
+                <a href="#gallery" className="nav-link">ทำเนียบเด็กวัด</a>
                 <a href="#donors" className="nav-link">ทาสแมวใจดี</a>
                 <a href="#donate-form-section" className="nav-link">ร่วมทำบุญ</a>
               </nav>
@@ -379,6 +393,30 @@
                   </div>
                   <button onClick={() => selectTier(500)} className="btn btn-secondary tier-action">เลือกยอดนี้</button>
                 </div>
+              </div>
+            </section>
+
+            {/* Cats Gallery Section */}
+            <section id="gallery" style={{ paddingTop: '5rem', paddingBottom: '3rem' }}>
+              <div className="section-header">
+                <p className="section-subtitle">WAT KHONGKHA CATS</p>
+                <h2 className="section-title">ทำเนียบเด็กวัดคงคา</h2>
+                <p className="section-desc">ทำความรู้จักสมาชิกบางส่วนของแก๊งแมววัดคงคาที่คอยต้อนรับสาธุชน และกำลังรออาหารเม็ดแสนอร่อยจากคุณ</p>
+              </div>
+
+              <div className="gallery-grid">
+                {catsList.map(cat => (
+                  <div key={cat.id} className="cat-card">
+                    <div className="cat-img-wrapper">
+                      <img src={cat.img} alt={cat.name} className="cat-img" />
+                      <span className="cat-status-badge">{cat.status}</span>
+                    </div>
+                    <div className="cat-info">
+                      <h3 className="cat-name">{cat.name}</h3>
+                      <p className="cat-bio">{cat.bio}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </section>
 
