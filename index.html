@@ -189,6 +189,29 @@
       // Cats Gallery List (images downloaded from Google Drive)
       const catsList = ['cat1.jpg', 'cat2.jpg', 'cat3.jpg', 'cat4.jpg', 'cat5.jpg', 'cat6.jpg'];
 
+      // Fetch latest donation stats from Cloudflare KV API
+      const fetchDonationStats = () => {
+        fetch('/api/donation')
+          .then(res => {
+            if (!res.ok) throw new Error("API request failed");
+            return res.json();
+          })
+          .then(data => {
+            if (data.currentAmount !== undefined && data.totalDonors !== undefined) {
+              setCurrentAmount(data.currentAmount);
+              setTotalDonors(data.totalDonors);
+            }
+          })
+          .catch(err => console.log("Running in local offline mode. Using local states."));
+      };
+
+      // Poll API every 15 seconds to keep stats updated in real-time
+      useEffect(() => {
+        fetchDonationStats(); // Initial fetch
+        const pollInterval = setInterval(fetchDonationStats, 15000);
+        return () => clearInterval(pollInterval);
+      }, []);
+
       useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
       }, [theme]);
@@ -239,9 +262,34 @@
       const handleConfirmPayment = () => {
         const finalAmount = customAmount ? parseFloat(customAmount) : selectedAmount;
 
-        setCurrentAmount(prev => prev + finalAmount);
-        setTotalDonors(prev => prev + 1);
-        setDonationStep('success');
+        // Post update to Cloudflare Workers KV API
+        fetch('/api/donation', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount: finalAmount })
+        })
+        .then(res => {
+          if (!res.ok) throw new Error("API post failed");
+          return res.json();
+        })
+        .then(data => {
+          if (data.success) {
+            setCurrentAmount(data.currentAmount);
+            setTotalDonors(data.totalDonors);
+          } else {
+            // Fallback
+            setCurrentAmount(prev => prev + finalAmount);
+            setTotalDonors(prev => prev + 1);
+          }
+          setDonationStep('success');
+        })
+        .catch(err => {
+          console.log("Offline mode post fallback:", err);
+          // Fallback local update if API is not running (e.g. running locally via file://)
+          setCurrentAmount(prev => prev + finalAmount);
+          setTotalDonors(prev => prev + 1);
+          setDonationStep('success');
+        });
 
         // Trigger a happy meow reaction from the virtual cat!
         setCatReaction('เหมียววว! ยอดบริจาคเข้าแล้ว ขอบคุณทาสผู้อุปถัมภ์นะเมี๊ยว! 😻🧡🎉');
