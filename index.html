@@ -163,15 +163,6 @@
       const [catEmoji, setCatEmoji] = useState('🐈');
       const [isReacting, setIsReacting] = useState(false);
 
-      // Donor list mock data (tailored for temple cat donation theme)
-      const [donations, setDonations] = useState([
-        { id: 1, name: 'คุณแม่มะลิและครอบครัว', amount: 500, message: 'ขอให้น้องๆ แมววัดคงคาทุกตัวอิ่มท้อง สุขภาพแข็งแรงนะลูก 🐱🧡', date: '3 นาทีที่แล้ว' },
-        { id: 2, name: 'ทาสแมวส้มหัวใจส้ม', amount: 250, message: 'ร่วมเป็นเจ้าภาพอาหารเม็ดครึ่งกระสอบจ้า สู้ๆ นะคะผู้ดูแล', date: '12 นาทีที่แล้ว' },
-        { id: 3, name: 'ผู้ไม่ประสงค์ออกนาม', amount: 50, message: 'สมทบค่าทรีตแมวเลียให้น้องๆ จ้า', date: '34 นาทีที่แล้ว' },
-        { id: 4, name: 'กัลยาณมิตรวัดคงคา', amount: 1000, message: 'ทำบุญช่วยค่าน้ำค่าอาหารสัตว์ตกยาก ขอให้ผู้ดูแลเจริญๆ ครับ', date: '2 ชั่วโมงที่แล้ว' },
-        { id: 5, name: 'ทาสแมวสามสี', amount: 100, message: 'ขอร่วมป้อนข้าวเด็กๆ วัดคงคาด้วยคนค่ะ สาธุค่ะ 🙏', date: '3 ชั่วโมงที่แล้ว' },
-      ]);
-
       // Form State
       const [formName, setFormName] = useState('');
       const [formMessage, setFormMessage] = useState('');
@@ -233,18 +224,7 @@
       // Confirm Payment Simulation
       const handleConfirmPayment = () => {
         const finalAmount = customAmount ? parseFloat(customAmount) : selectedAmount;
-        const donorName = formName.trim() || 'ผู้ไม่ประสงค์ออกนาม';
-        const donorMsg = formMessage.trim() || 'ขอร่วมทำบุญค่าอาหารน้องแมววัดคงคาค่ะ 🙏🐾';
 
-        const newDonation = {
-          id: Date.now(),
-          name: donorName,
-          amount: finalAmount,
-          message: donorMsg,
-          date: 'เมื่อครู่นี้'
-        };
-
-        setDonations(prev => [newDonation, ...prev]);
         setCurrentAmount(prev => prev + finalAmount);
         setTotalDonors(prev => prev + 1);
         setDonationStep('success');
@@ -281,8 +261,7 @@
               <nav className="nav-links">
                 <a href="#home" className="nav-link">หน้าแรก</a>
                 <a href="#tiers" className="nav-link">แพ็คเกจอิ่มท้อง</a>
-                <a href="#gallery" className="nav-link">ทำเนียบเด็กวัด</a>
-                <a href="#donors" className="nav-link">ทาสแมวใจดี</a>
+                <a href="#gallery" className="nav-link">ภาพน้องแมว</a>
                 <a href="#donate-form-section" className="nav-link">ร่วมทำบุญ</a>
               </nav>
               <div className="nav-actions">
@@ -428,37 +407,15 @@
               <Carousel images={catsList} />
             </section>
 
-            {/* Split Feed & Donation Section */}
-            <section id="donors" style={{ paddingTop: '2rem' }}>
-              <div className="donation-flow">
-                {/* Donation Feed */}
-                <div className="feed-container">
-                  <div className="feed-header">
-                    <span>ทาสแมวใจดีที่ร่วมอุปถัมภ์</span>
-                    <span style={{ fontSize: '0.85rem', color: 'var(--color-accent)', fontWeight: '750' }}>อัปเดตสด 🐾</span>
-                  </div>
-                  
-                  <div className="feed-list">
-                    {donations.map(donation => (
-                      <div key={donation.id} className="feed-item">
-                        <div className="feed-item-header">
-                          <span className="feed-donor-name">🐾 {donation.name}</span>
-                          <span className="feed-donor-amount">฿{donation.amount.toLocaleString()}</span>
-                        </div>
-                        <p className="feed-donor-msg">“ {donation.message} ”</p>
-                        <span className="feed-donor-date">{donation.date}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Donation Form and Payment System */}
-                <div className="donation-form-card" id="donate-form-section">
+            {/* Donation Form and Payment System Section */}
+            <section id="donate-form-section" style={{ paddingTop: '3rem', paddingBottom: '3rem' }}>
+              <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+                <div className="donation-form-card">
                   {donationStep === 'input' && (
                     <form onSubmit={handleDonateSubmit}>
                       <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', fontWeight: '850' }}>ร่วมป้อนข้าวน้องแมว</h3>
                       <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
-                        กรอกข้อมูลเพื่อร่วมทำบุญค่าอาหารสัตว์ยากไร้ และบันทึกลงทำเนียบทาสแมวใจดี
+                        กรอกข้อมูลเพื่อร่วมทำบุญสมทบค่าอาหารสัตว์ยากไร้ของวัดคงคา
                       </p>
 
                       <div className="form-group">
@@ -493,12 +450,12 @@
                       </div>
 
                       <div className="form-group">
-                        <label className="form-label" htmlFor="donorName">ชื่อทาสแมวผู้มีจิตเมตตา</label>
+                        <label className="form-label" htmlFor="donorName">ชื่อผู้ร่วมทำบุญ</label>
                         <input
                           type="text"
                           id="donorName"
                           className="form-input"
-                          placeholder="เช่น ทาสแมวส้ม / หรือทิ้งว่างเพื่อไม่ประสงค์ออกนาม"
+                          placeholder="เช่น ทาสแมวใจดี / ปล่อยว่างเพื่อไม่แสดงนาม"
                           value={formName}
                           onChange={(e) => setFormName(e.target.value)}
                         />
@@ -509,7 +466,7 @@
                         <textarea
                           id="donorMessage"
                           className="form-input"
-                          placeholder="ฝากคำอวยพรหรือฝากข้อความถึงน้องแมววัดคงคา... (จำกัด 200 ตัวอักษร)"
+                          placeholder="ฝากข้อความถึงน้องแมววัดคงคา... (จำกัด 200 ตัวอักษร)"
                           value={formMessage}
                           onChange={(e) => setFormMessage(e.target.value)}
                           maxLength="200"
@@ -526,7 +483,7 @@
                     <div className="qr-modal">
                       <h3 style={{ fontSize: '1.4rem', fontWeight: '850' }}>สแกนทำบุญค่านมและอาหาร</h3>
                       <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
-                        กรุณาเปิดแอปพลิเคชันธนาคารและสแกน QR Code นี้เพื่อทำการโอนเงินบริจาคจำลองเข้าบัญชีวัดคงคา
+                        กรุณาเปิดแอปพลิเคชันธนาคารและสแกน QR Code นี้เพื่อทำการโอนเงินบริจาคเข้าบัญชีวัดคงคา
                       </p>
 
                       <PromptPayQR amount={customAmount ? customAmount : selectedAmount} />
@@ -557,7 +514,7 @@
                       <div className="success-icon">✓</div>
                       <h3 style={{ fontSize: '1.6rem', color: 'var(--color-success)' }}>ขอบพระคุณในความเมตตาค่ะ!</h3>
                       <p style={{ color: 'var(--text-secondary)', margin: '1rem 0 1.5rem', fontSize: '0.95rem' }}>
-                        ยอดทำบุญของท่านได้รับการยืนยันเรียบร้อยแล้ว รายชื่อพร้อมคำอวยพรของท่านได้บันทึกลงทำเนียบทาสแมวใจดีบนหน้าหลักเรียบร้อยแล้วค่ะ 🙏🧡🐾
+                        ยอดทำบุญของท่านได้รับการส่งข้อมูลเรียบร้อยแล้ว ขอบพระคุณทาสแมวผู้มีจิตศรัทธาทุกท่านค่ะ 🙏🧡🐾
                       </p>
                       <button
                         type="button"
