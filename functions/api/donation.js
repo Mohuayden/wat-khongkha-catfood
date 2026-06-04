@@ -4,7 +4,7 @@ export async function onRequestGet(context) {
   
   if (!DONATION_STORE) {
     // If KV is not bound yet, return fallback mock values
-    return new Response(JSON.stringify({ currentAmount: 1900, totalDonors: 9 }), {
+    return new Response(JSON.stringify({ currentAmount: 0, totalDonors: 0 }), {
       headers: { 
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*" 
@@ -17,8 +17,8 @@ export async function onRequestGet(context) {
 
   return new Response(
     JSON.stringify({
-      currentAmount: currentAmount ? parseFloat(currentAmount) : 1900,
-      totalDonors: totalDonors ? parseInt(totalDonors) : 9
+      currentAmount: currentAmount ? parseFloat(currentAmount) : 0,
+      totalDonors: totalDonors ? parseInt(totalDonors) : 0
     }),
     {
       headers: { 
