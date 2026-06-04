@@ -122,6 +122,53 @@
       );
     };
 
+    const Carousel = ({ images }) => {
+      const [currentIndex, setCurrentIndex] = useState(0);
+      const [isHovered, setIsHovered] = useState(false);
+
+      const nextSlide = () => {
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+      };
+
+      const prevSlide = () => {
+        setCurrentIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
+      };
+
+      useEffect(() => {
+        if (isHovered) return;
+        const timer = setInterval(nextSlide, 4500); // Autoplay 4.5s
+        return () => clearInterval(timer);
+      }, [images.length, isHovered]);
+
+      return (
+        <div 
+          className="carousel-container"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          <button className="carousel-arrow prev" onClick={prevSlide} aria-label="Previous Slide">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <div className="carousel-slide">
+            <img src={images[currentIndex]} alt={`ภาพน้องแมววัดคงคา รูปที่ ${currentIndex + 1}`} className="carousel-img" />
+          </div>
+          <button className="carousel-arrow next" onClick={nextSlide} aria-label="Next Slide">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          
+          <div className="carousel-dots">
+            {images.map((_, index) => (
+              <span 
+                key={index} 
+                className={`carousel-dot ${index === currentIndex ? 'active' : ''}`}
+                onClick={() => setCurrentIndex(index)}
+              ></span>
+            ))}
+          </div>
+        </div>
+      );
+    };
+
     const App = () => {
       const [theme, setTheme] = useState('light');
       
@@ -154,14 +201,7 @@
       const [donationStep, setDonationStep] = useState('input');
 
       // Cats Gallery List (images downloaded from Google Drive)
-      const catsList = [
-        { id: 1, name: 'น้องส้มแฝดพี่', img: 'cat1.jpg', status: '🐱 อ้วนกลมรักสงบ', bio: 'เจ้าของตำแหน่งหนุ่มเรียบร้อยประจำศาลา คอยเฝ้าหลวงพี่ตอนกวาดใบไม้' },
-        { id: 2, name: 'เจ้าสามสี', img: 'cat2.jpg', status: '🌸 สาวน้อยขี้อ้อน', bio: 'ชอบปีนตักสาธุชนที่มาทำบุญ ใครได้เจอเป็นต้องยอมควักขนมให้' },
-        { id: 3, name: 'ลุงทักซิโด้', img: 'cat3.jpg', status: '🎩 เจ้าถิ่นประจำวัด', bio: 'มาเฟียประจำศาลาหลัก รักการนอนเป็นชีวิตจิตใจ แต่ตื่นเร็วเวลาได้ยินเสียงจาน' },
-        { id: 4, name: 'คุณนวลน้อย', img: 'cat4.jpg', status: '🤍 คุณนายสะอาด', bio: 'สาวขนขาวตาปนเทา รักความสะอาดและแต่งตัวเก่ง ขวัญใจน้องๆ ทุกตัว' },
-        { id: 5, name: 'เจ้าเปี๊ยก', img: 'cat5.jpg', status: '⚡ แซบซนป่วนวัด', bio: 'เด็กซนวัยกำลังวิ่ง คอยไล่จับเงาและขโมยขนมเพื่อนๆ เป็นประจำ' },
-        { id: 6, name: 'พี่เสือโคร่ง', img: 'cat6.jpg', status: '🐯 นักล่าเฝ้าโบสถ์', bio: 'ลายสลิดสุดเท่ คอยเดินตรวจตราความเรียบร้อยรอบโบสถ์ตอนเช้ามืด' }
-      ];
+      const catsList = ['cat1.jpg', 'cat2.jpg', 'cat3.jpg', 'cat4.jpg', 'cat5.jpg', 'cat6.jpg'];
 
       useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
@@ -400,24 +440,11 @@
             <section id="gallery" style={{ paddingTop: '5rem', paddingBottom: '3rem' }}>
               <div className="section-header">
                 <p className="section-subtitle">WAT KHONGKHA CATS</p>
-                <h2 className="section-title">ทำเนียบเด็กวัดคงคา</h2>
-                <p className="section-desc">ทำความรู้จักสมาชิกบางส่วนของแก๊งแมววัดคงคาที่คอยต้อนรับสาธุชน และกำลังรออาหารเม็ดแสนอร่อยจากคุณ</p>
+                <h2 className="section-title">ภาพน้องแมววัดคงคา</h2>
+                <p className="section-desc">ภาพถ่ายจริงของเหล่าน้องแมวจรจัดในวัดคงคาที่รอการอุปการะค่านมและอาหารจากท่าน</p>
               </div>
 
-              <div className="gallery-grid">
-                {catsList.map(cat => (
-                  <div key={cat.id} className="cat-card">
-                    <div className="cat-img-wrapper">
-                      <img src={cat.img} alt={cat.name} className="cat-img" />
-                      <span className="cat-status-badge">{cat.status}</span>
-                    </div>
-                    <div className="cat-info">
-                      <h3 className="cat-name">{cat.name}</h3>
-                      <p className="cat-bio">{cat.bio}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <Carousel images={catsList} />
             </section>
 
             {/* Split Feed & Donation Section */}
