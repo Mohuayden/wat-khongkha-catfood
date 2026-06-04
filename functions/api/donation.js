@@ -4,7 +4,7 @@ export async function onRequestGet(context) {
   
   if (!DONATION_STORE) {
     // If KV is not bound yet, return fallback mock values
-    return new Response(JSON.stringify({ currentAmount: 13250, totalDonors: 114 }), {
+    return new Response(JSON.stringify({ currentAmount: 1900, totalDonors: 9 }), {
       headers: { 
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*" 
@@ -17,8 +17,8 @@ export async function onRequestGet(context) {
 
   return new Response(
     JSON.stringify({
-      currentAmount: currentAmount ? parseFloat(currentAmount) : 13250,
-      totalDonors: totalDonors ? parseInt(totalDonors) : 114
+      currentAmount: currentAmount ? parseFloat(currentAmount) : 1900,
+      totalDonors: totalDonors ? parseInt(totalDonors) : 9
     }),
     {
       headers: { 
@@ -57,8 +57,8 @@ export async function onRequestPost(context) {
     }
 
     // Get current values
-    let currentAmount = parseFloat(await DONATION_STORE.get("currentAmount") || 13250);
-    let totalDonors = parseInt(await DONATION_STORE.get("totalDonors") || 114);
+    let currentAmount = parseFloat(await DONATION_STORE.get("currentAmount") || 1900);
+    let totalDonors = parseInt(await DONATION_STORE.get("totalDonors") || 9);
 
     // Update values
     currentAmount += donationAmount;

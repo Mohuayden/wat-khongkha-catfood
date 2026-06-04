@@ -169,8 +169,8 @@
       
       // Live Donation Tracker State
       const targetAmount = 30000; // Monthly target: 30,000 Baht (approx 60 bags of cat food)
-      const [currentAmount, setCurrentAmount] = useState(13250);
-      const [totalDonors, setTotalDonors] = useState(114);
+      const [currentAmount, setCurrentAmount] = useState(1900);
+      const [totalDonors, setTotalDonors] = useState(9);
 
       // Virtual Cat State
       const [catReaction, setCatReaction] = useState('กำลังรอขนม... 🐾');
@@ -387,12 +387,12 @@
                     <div className="stat-val">฿{currentAmount.toLocaleString()}</div>
                   </div>
                   <div className="stat-item">
-                    <div className="stat-label">อาหารเม็ดที่จัดซื้อได้</div>
-                    <div className="stat-val">{foodBagsCount} / {foodBagsTarget} กระสอบ</div>
+                    <div className="stat-label">ยอดผู้มีจิตเมตตา</div>
+                    <div className="stat-val">{totalDonors.toLocaleString()} คน</div>
                   </div>
                 </div>
 
-                <div className="progress-container">
+                <div className="progress-container" style={{ marginBottom: '0.5rem' }}>
                   <div className="progress-header">
                     <span>ค่านมและอาหารเปียกที่อิ่มท้องแล้ว</span>
                     <span style={{ color: 'var(--color-accent)', fontWeight: '800' }}>{progressPercent}%</span>
@@ -402,11 +402,6 @@
                       <div className="progress-glow-dot"></div>
                     </div>
                   </div>
-                </div>
-
-                <div className="goal-desc">
-                  <span>เป้าหมายค่าอาหารรายเดือน: <strong>฿{targetAmount.toLocaleString()}</strong></span>
-                  <span>ยอดผู้มีจิตเมตตา: <strong>{totalDonors.toLocaleString()} คน</strong></span>
                 </div>
               </div>
             </section>
