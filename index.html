@@ -92,32 +92,13 @@
     const PromptPayQR = ({ amount }) => {
       return (
         <div className="qr-box">
-          <div className="promptpay-header">
-            <span>Prompt Pay</span>
-          </div>
-          <svg className="qr-placeholder-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <rect x="5" y="5" width="25" height="25" fill="#000" />
-            <rect x="9" y="9" width="17" height="17" fill="#fff" />
-            <rect x="13" y="13" width="9" height="9" fill="#000" />
-            
-            <rect x="70" y="5" width="25" height="25" fill="#000" />
-            <rect x="74" y="9" width="17" height="17" fill="#fff" />
-            <rect x="78" y="13" width="9" height="9" fill="#000" />
-            
-            <rect x="5" y="70" width="25" height="25" fill="#000" />
-            <rect x="9" y="74" width="17" height="17" fill="#fff" />
-            <rect x="13" y="78" width="9" height="9" fill="#000" />
-
-            <path d="M 35 5 H 45 V 15 H 35 Z M 50 5 H 65 V 10 H 50 Z M 55 15 H 65 V 25 H 55 Z M 35 20 H 50 V 25 H 35 Z" fill="#000" />
-            <path d="M 5 35 H 15 V 45 H 5 Z M 20 35 H 30 V 55 H 20 Z M 10 50 H 15 V 65 H 10 Z M 35 35 H 55 V 40 H 35 Z" fill="#000" />
-            <path d="M 45 45 H 55 V 60 H 45 Z M 35 65 H 50 V 75 H 35 Z M 55 60 H 65 V 70 H 55 Z M 65 35 H 75 V 50 H 65 Z" fill="#000" />
-            <path d="M 80 35 H 95 V 45 H 80 Z M 85 50 H 90 V 65 H 85 Z M 70 55 H 80 V 65 H 70 Z M 70 70 H 75 V 80 H 70 Z" fill="#000" />
-            <path d="M 80 70 H 95 V 75 H 80 Z M 80 80 H 90 V 95 H 80 Z M 35 80 H 45 V 95 H 35 Z M 50 85 H 65 V 95 H 50 Z" fill="#000" />
-            <circle cx="50" cy="50" r="12" fill="#003666" />
-            <text x="50" y="54" fill="#fff" fontSize="11" fontWeight="bold" textAnchor="middle">PP</text>
-          </svg>
-          <div style={{ color: '#431407', fontSize: '0.8rem', fontWeight: '700' }}>จำนวนเงินสแกนทำบุญค่าอาหาร</div>
-          <div className="qr-amount-text">฿{Number(amount).toLocaleString()}</div>
+          <img 
+            src="qr.jpg" 
+            alt="ช่องทางสแกนทำบุญบัญชีวัดคงคา" 
+            style={{ width: '220px', height: 'auto', display: 'block', margin: '0 auto 1.25rem', borderRadius: '12px', boxShadow: '0 4px 12px rgba(67, 20, 7, 0.05)' }} 
+          />
+          <div style={{ color: '#431407', fontSize: '0.85rem', fontWeight: '700' }}>ยอดเงินร่วมบริจาค</div>
+          <div className="qr-amount-text" style={{ marginTop: '0.25rem' }}>฿{Number(amount).toLocaleString()}</div>
         </div>
       );
     };
