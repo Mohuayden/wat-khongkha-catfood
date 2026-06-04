@@ -440,7 +440,6 @@
               </a>
               <nav className="nav-links">
                 <a href="#home" className="nav-link">หน้าแรก</a>
-                <a href="#tiers" className="nav-link">แพ็คเกจอิ่มท้อง</a>
                 <a href="#gallery" className="nav-link">ภาพน้องแมว</a>
                 <a href="#donate-form-section" className="nav-link">ร่วมทำบุญ</a>
               </nav>
@@ -475,7 +474,7 @@
                   <a href="#donate-form-section" className="btn btn-primary">
                     ร่วมป้อนข้าวเด็กๆ <PawIcon style={{ marginLeft: '4px' }} />
                   </a>
-                  <a href="#tiers" className="btn btn-secondary">ดูรายการของบริจาค</a>
+                  <a href="#gallery" className="btn btn-secondary">ชมภาพเด็กๆ 📸</a>
                 </div>
 
                 {/* Virtual Cat Play Interaction Box */}
@@ -524,52 +523,7 @@
               </div>
             </section>
 
-            {/* Donation Packages Tiers */}
-            <section id="tiers" style={{ paddingTop: '5rem' }}>
-              <div className="section-header">
-                <p className="section-subtitle">DONATION TIERS</p>
-                <h2 className="section-title">เลือกยอดเงินอุปการะอาหารน้องแมว</h2>
-                <p className="section-desc">คุณสามารถเลือกแพ็คเกจช่วยเหลือน้องแมวตามกำลังศรัทธา ทุกยอดทำบุญนำไปจัดซื้ออาหารโดยตรง</p>
-              </div>
 
-              <div className="tiers-grid">
-                <div className="tier-card">
-                  <div>
-                    <div className="tier-amount">฿50 <span>/ มื้อเล็ก</span></div>
-                    <h3 className="tier-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <span style={{ background: 'rgba(249, 115, 22, 0.1)', color: 'var(--color-accent)', width: '40px', height: '40px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><MilkIcon /></span>
-                      มื้ออิ่มประทังหิว
-                    </h3>
-                    <p className="tier-desc">สนับสนุนค่านมแพะเลี้ยงลูกแมวกำพร้า 1 กล่อง และอาหารเปียกสำหรับแมวป่วยรวม 2 ซอง</p>
-                  </div>
-                  <button onClick={() => selectTier(50)} className="btn btn-secondary tier-action">เลือกยอดนี้</button>
-                </div>
-
-                <div className="tier-card featured">
-                  <div>
-                    <div className="tier-amount" style={{ color: 'var(--color-success)' }}>฿250 <span>/ มื้อใหญ่</span></div>
-                    <h3 className="tier-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <span style={{ background: 'rgba(249, 115, 22, 0.1)', color: 'var(--color-accent)', width: '40px', height: '40px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><FishIcon /></span>
-                      อาหารเม็ดครึ่งกระสอบ
-                    </h3>
-                    <p className="tier-desc">ช่วยค่าอาหารเม็ดสำเร็จรูปคุณภาพดีปริมาณ 7.5 กิโลกรัม เลี้ยงน้องแมวให้อิ่มท้องได้ถึง 1 สัปดาห์เต็ม</p>
-                  </div>
-                  <button onClick={() => selectTier(250)} className="btn btn-primary tier-action">เลือกยอดนี้</button>
-                </div>
-
-                <div className="tier-card">
-                  <div>
-                    <div className="tier-amount">฿500 <span>/ เต็มกระสอบ</span></div>
-                    <h3 className="tier-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <span style={{ background: 'rgba(249, 115, 22, 0.1)', color: 'var(--color-accent)', width: '40px', height: '40px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><BowlIcon /></span>
-                      เจ้าภาพอาหาร 1 กระสอบ
-                    </h3>
-                    <p className="tier-desc">เป็นเจ้าภาพอาหารเม็ดกระสอบใหญ่พิเศษขนาด 15 กิโลกรัม จำนวน 1 กระสอบเต็ม เลี้ยงแมวทั้งวัดได้ 1-2 วัน</p>
-                  </div>
-                  <button onClick={() => selectTier(500)} className="btn btn-secondary tier-action">เลือกยอดนี้</button>
-                </div>
-              </div>
-            </section>
 
             {/* Cats Gallery Section */}
             <section id="gallery" style={{ paddingTop: '5rem', paddingBottom: '3rem' }}>
@@ -772,8 +726,7 @@
               </div>
               <div style={{ display: 'flex', gap: '1.5rem' }}>
                 <a href="#home">หน้าแรก</a>
-                <a href="#tiers">แพ็คเกจ</a>
-                <a href="#donors">ทาสแมวใจดี</a>
+                <a href="#gallery">ภาพน้องแมว</a>
                 <a href="#donate-form-section">ร่วมทำบุญ</a>
               </div>
             </div>
